@@ -1,44 +1,91 @@
-function changeFocusedInput(event) {
-    let focusedInput = event.target;
+function handleKeyDown(event) {
     if (
-        focusedInput.id != 'input4' &&
-        event.key === 'ArrowRight' &&
-        focusedInput.selectionStart ===
-            focusedInput.value.length
+        event.target === null ||
+        event.target instanceof HTMLInputElement === false
     ) {
-        let number = (
-            parseInt(focusedInput.id.match(/\d+/)[0]) + 1
-        ).toString();
-        document.getElementById('input' + number).focus();
-    } else if (
-        focusedInput.id != 'input1' &&
-        event.key === 'ArrowLeft' &&
-        focusedInput.selectionStart === 0
-    ) {
-        let number = (
-            parseInt(focusedInput.id.match(/\d+/)[0]) - 1
-        ).toString();
-        document.getElementById('input' + number).focus();
+        return;
     }
-    return;
-}
-
-function validInputAtClient(event) {
-    let key = String.fromCharCode(event.which);
     let focusedInput = event.target;
-    if (key.match(/\d|[\b]/)) {
-        //TODO: test logic to change focus to next input when the 3rd digit got entered.
-        if (focusedInput.selectionStart === 3) {
-            let number = (
+    let keyDown = event.key;
+    if (/\d/.test(keyDown)) {
+        console.log('Digit down');
+        if (
+            focusedInput.id != 'input4' &&
+            focusedInput.selectionStart === 3
+        ) {
+            let increment = (
                 parseInt(focusedInput.id.match(/\d+/)[0]) +
                 1
             ).toString();
             document
-                .getElementById('input', number)
+                .getElementById('input' + increment)
                 .focus();
         }
     } else {
-        event.preventDefault();
+        switch (keyDown) {
+            /* case 'Control':
+                console.log('Control down');
+                break; */
+            case 'Backspace':
+                console.log('Backspace down');
+                if (
+                    focusedInput.id != 'input1' &&
+                    focusedInput.selectionStart === 0
+                ) {
+                    let increment = (
+                        parseInt(
+                            focusedInput.id.match(/\d+/)[0]
+                        ) - 1
+                    ).toString();
+                    document
+                        .getElementById('input' + increment)
+                        .focus();
+                }
+                break;
+            case 'Enter':
+                console.log('Enter down');
+                break;
+            case 'Tab':
+                console.log('Tab down');
+                break;
+            case 'ArrowRight':
+                console.log('Right Arrow down');
+                if (
+                    focusedInput.id != 'input4' &&
+                    focusedInput.selectionStart ===
+                        focusedInput.value.length
+                ) {
+                    let increment = (
+                        parseInt(
+                            focusedInput.id.match(/\d+/)[0]
+                        ) + 1
+                    ).toString();
+                    document
+                        .getElementById('input' + increment)
+                        .focus();
+                }
+                break;
+            case 'ArrowLeft':
+                console.log('Left Arrow down');
+                if (
+                    focusedInput.id != 'input1' &&
+                    focusedInput.selectionStart === 0
+                ) {
+                    let increment = (
+                        parseInt(
+                            focusedInput.id.match(/\d+/)[0]
+                        ) - 1
+                    ).toString();
+                    document
+                        .getElementById('input' + increment)
+                        .focus();
+                }
+                break;
+            default:
+                console.log('Key down does not matter');
+                event.preventDefault();
+                break;
+        }
     }
     return;
 }
@@ -69,16 +116,9 @@ function init() {
     document
         .querySelectorAll('.ipv4_input')
         .forEach((input) => {
-            //TODO: combine Events and Functions to "keydown" handling.
-            // -> First try with a huge switch case for event.key disabled functions with keys like
-            // "control" or "enter" and also the normal "arrow key" logic inside an input element.
-            input.addEventListener(
-                'keypress',
-                validInputAtClient
-            );
             input.addEventListener(
                 'keydown',
-                changeFocusedInput
+                handleKeyDown
             );
         });
 }
